@@ -6,16 +6,18 @@ use Database\Seeders\SchoolSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class ExampleTest extends TestCase
+class HomePageTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_the_application_returns_a_successful_response(): void
+    public function test_homepage_displays_content(): void
     {
         $this->seed(SchoolSeeder::class);
 
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response->assertStatus(200)
+            ->assertSee('Membentuk Generasi')
+            ->assertSee('Berita');
     }
 }

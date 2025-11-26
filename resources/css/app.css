@@ -8,4 +8,163 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-primary-50: var(--color-sky-50);
+    --color-primary-100: var(--color-sky-100);
+    --color-primary-200: var(--color-sky-200);
+    --color-primary-300: var(--color-sky-300);
+    --color-primary-400: var(--color-sky-400);
+    --color-primary-500: var(--color-sky-500);
+    --color-primary-600: var(--color-sky-600);
+    --color-primary-700: var(--color-sky-700);
+    --color-primary-800: var(--color-sky-800);
+    --color-primary-900: var(--color-sky-900);
+    --color-primary-950: var(--color-sky-950);
+}
+
+@layer base {
+    .content-body {
+        @apply text-base text-slate-700 leading-relaxed;
+    }
+
+    .content-body h1 {
+        @apply text-3xl font-bold text-slate-900 mt-10 mb-5 leading-tight;
+    }
+
+    .content-body h2 {
+        @apply text-2xl font-bold text-slate-900 mt-8 mb-4 leading-tight;
+    }
+
+    .content-body h3 {
+        @apply text-xl font-semibold text-slate-900 mt-6 mb-3 leading-snug;
+    }
+
+    .content-body h4 {
+        @apply text-lg font-semibold text-slate-900 mt-5 mb-2;
+    }
+
+    .content-body h5 {
+        @apply text-base font-semibold text-slate-900 mt-4 mb-2;
+    }
+
+    .content-body h6 {
+        @apply text-sm font-semibold text-slate-900 mt-4 mb-2 uppercase tracking-wide;
+    }
+
+    .content-body p {
+        @apply text-slate-700 mb-4 leading-relaxed;
+    }
+
+    .content-body strong,
+    .content-body b {
+        @apply font-bold text-slate-900;
+    }
+
+    .content-body em,
+    .content-body i {
+        @apply italic;
+    }
+
+    .content-body ul {
+        @apply list-disc pl-6 space-y-2 mb-4 text-slate-700;
+    }
+
+    .content-body ol {
+        @apply list-decimal pl-6 space-y-2 mb-4 text-slate-700;
+    }
+
+    .content-body li {
+        @apply leading-relaxed;
+    }
+
+    .content-body ul ul,
+    .content-body ol ul {
+        @apply list-disc mt-2 mb-0;
+    }
+
+    .content-body ul ol,
+    .content-body ol ol {
+        @apply list-decimal mt-2 mb-0;
+    }
+
+    .content-body a {
+        @apply text-primary-600 hover:text-primary-700 underline decoration-primary-300 hover:decoration-primary-500 transition-colors;
+    }
+
+    .content-body img {
+        @apply rounded-xl w-full h-auto my-6 border border-slate-200 shadow-sm;
+    }
+
+    .content-body figure {
+        @apply my-6;
+    }
+
+    .content-body figcaption {
+        @apply text-sm text-slate-500 italic text-center mt-2;
+    }
+
+    .content-body blockquote {
+        @apply border-l-4 border-primary-500 pl-6 pr-4 italic text-slate-700 my-6 bg-slate-50 py-4 rounded-r-lg;
+    }
+
+    .content-body blockquote p {
+        @apply mb-0;
+    }
+
+    .content-body code {
+        @apply bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded text-sm font-mono;
+    }
+
+    .content-body pre {
+        @apply bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto my-6;
+    }
+
+    .content-body pre code {
+        @apply bg-transparent text-slate-100 p-0;
+    }
+
+    .content-body table {
+        @apply w-full border-collapse my-6;
+    }
+
+    .content-body thead {
+        @apply bg-slate-100;
+    }
+
+    .content-body th {
+        @apply border border-slate-300 px-4 py-2 text-left font-semibold text-slate-900;
+    }
+
+    .content-body td {
+        @apply border border-slate-300 px-4 py-2 text-slate-700;
+    }
+
+    .content-body tbody tr:hover {
+        @apply bg-slate-50;
+    }
+
+    .content-body hr {
+        @apply border-slate-300 my-8;
+    }
+
+    .content-body iframe,
+    .content-body video {
+        @apply w-full rounded-xl my-6;
+    }
+
+    /* Custom Scrollbar for Carousel */
+    .scrollbar-thin::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-track {
+        @apply bg-slate-100 rounded-full;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        @apply bg-slate-300 rounded-full;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+        @apply bg-slate-400;
+    }
 }

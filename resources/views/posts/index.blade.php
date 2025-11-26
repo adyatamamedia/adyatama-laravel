@@ -1,0 +1,194 @@
+@extends('layouts.public', ['title' => $selectedCategory ? 'Berita - ' . ($categories->firstWhere('slug', $selectedCategory)?->name ?? 'Berita') : 'Berita'])
+
+@section('content')
+<!-- Header Section -->
+<section class="py-12 bg-gradient-to-br from-sky-50 via-white to-blue-50 border-b border-slate-100">
+    <div class="container mx-auto px-4">
+        <!-- Title with Breadcrumb -->
+        <div class="text-center mb-8">
+            <!-- Breadcrumb -->
+            <nav class="mb-4 flex justify-center">
+                <ol class="flex items-center gap-2 text-sm text-slate-600">
+                    <li>
+                        <a href="/" class="hover:text-primary-600 transition-colors">Beranda</a>
+                    </li>
+                    <li>
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </li>
+                    <li class="font-medium text-slate-900">Berita</li>
+                </ol>
+            </nav>
+
+            <h1 class="text-4xl lg:text-5xl font-bold text-slate-900 mb-3">
+                @if($selectedCategory)
+                    Berita: {{ $categories->firstWhere('slug', $selectedCategory)?->name }}
+                @else
+                    Berita Terbaru
+                @endif
+            </h1>
+            <p class="text-slate-600 max-w-2xl mx-auto">
+                @if($selectedCategory)
+                    Artikel dan informasi terbaru seputar {{ strtolower($categories->firstWhere('slug', $selectedCategory)?->name) }}
+                @else
+                    Kumpulan artikel dan informasi terbaru dari sekolah
+                @endif
+            </p>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="max-w-4xl mx-auto">
+            <!-- Search -->
+            <form action="{{ route('posts.index') }}" method="GET" class="mb-4">
+                @if($selectedCategory)
+                    <input type="hidden" name="category" value="{{ $selectedCategory }}">
+                @endif
+                <div class="relative">
+                    <input type="text" 
+                           name="q" 
+                           value="{{ $search ?? '' }}"
+                           placeholder="Cari berita..." 
+                           class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-100 rounded-lg text-sm transition-all">
+                    <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </form>
+
+            <!-- Category Filter -->
+            <div class="flex gap-2 flex-wrap justify-center">
+                <a href="{{ route('posts.index') }}" 
+                   class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ !$selectedCategory ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                    Semua
+                </a>
+                @foreach($categories as $category)
+                    <a href="{{ route('posts.index', ['category' => $category->slug]) }}" 
+                       class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ $selectedCategory == $category->slug ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                        {{ $category->name }}
+                    </a>
+                @endforeach
+            </div>
+
+            <!-- Active Filters Info -->
+            @if($selectedCategory || $search)
+                <div class="text-center mt-4 text-sm text-slate-600">
+                    Menampilkan
+                    @if($search)
+                        hasil pencarian "<strong>{{ $search }}</strong>"
+                    @endif
+                    @if($selectedCategory && $search)
+                        dalam kategori 
+                    @endif
+                    @if($selectedCategory)
+                        <strong>{{ $categories->firstWhere('slug', $selectedCategory)?->name }}</strong>
+                    @endif
+                    · 
+                    <a href="{{ route('posts.index') }}" class="text-primary-600 hover:text-primary-700 font-medium">
+                        Hapus filter
+                    </a>
+                </div>
+            @endif
+        </div>
+    </div>
+</section>
+
+<!-- Posts Grid Section -->
+<section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        @if($posts->count())
+            <div class="grid md:grid-cols-4 gap-6">
+                @foreach($posts as $post)
+                    <article class="group bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-xl hover:border-sky-200 transition-all duration-300">
+                        <!-- Featured Image -->
+                        <a href="/posts/{{ $post->slug }}" class="block relative aspect-[4/3] overflow-hidden bg-slate-100">
+                            @if($post->featured_image_url)
+                                <img src="{{ $post->featured_image_url }}" 
+                                     alt="{{ $post->title }}" 
+                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center bg-linear-to-br from-sky-50 to-sky-100 text-sky-200">
+                                    <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                                    </svg>
+                                </div>
+                            @endif
+                            
+                            <!-- Gradient overlay -->
+                            <div class="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            
+                            <!-- Video Badge -->
+                            @if($post->post_type === 'video' && $post->video_url)
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="bg-red-600 rounded-full p-4 shadow-2xl transform group-hover:scale-110 transition-transform duration-300">
+                                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M8 5v14l11-7z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            @endif
+                            
+                            <!-- Category badge -->
+                            @if($post->category)
+                                <div class="absolute top-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-semibold text-slate-700 shadow-sm">
+                                    {{ $post->category->name }}
+                                </div>
+                            @endif
+                        </a>
+                        
+                        <!-- Content -->
+                        <div class="p-5">
+                            <div class="flex items-center gap-2 text-xs text-slate-500 mb-3">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                {{ $post->published_at?->format('d M Y') }}
+                            </div>
+                            
+                            <h2 class="font-bold text-slate-900 mb-2 group-hover:text-sky-600 transition-colors line-clamp-2">
+                                <a href="/posts/{{ $post->slug }}">{{ $post->title }}</a>
+                            </h2>
+                            
+                            @if($post->excerpt)
+                                <p class="text-sm text-slate-600 line-clamp-3 mb-4">{{ $post->excerpt }}</p>
+                            @endif
+                            
+                            <a href="/posts/{{ $post->slug }}" class="inline-flex items-center gap-1 text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors">
+                                Baca selengkapnya
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </a>
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+
+            <!-- Pagination -->
+            <div class="mt-12">
+                {{ $posts->links() }}
+            </div>
+        @else
+            <div class="text-center py-16">
+                <svg class="w-20 h-20 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                </svg>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Berita tidak ditemukan</h3>
+                <p class="text-slate-600 mb-6">
+                    @if($search || $selectedCategory)
+                        Tidak ada berita yang sesuai dengan filter yang dipilih.
+                    @else
+                        Belum ada berita yang tersedia.
+                    @endif
+                </p>
+                @if($search || $selectedCategory)
+                    <a href="{{ route('posts.index') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 text-white rounded-full font-semibold hover:bg-primary-700 transition-colors">
+                        Lihat Semua Berita
+                    </a>
+                @endif
+            </div>
+        @endif
+    </div>
+</section>
+
+@endsection
