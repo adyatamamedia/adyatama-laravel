@@ -4,9 +4,9 @@
 <section class="bg-gradient-to-br from-sky-50 to-white py-16">
     <div class="container mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
         <div>
-            <p class="text-sm uppercase tracking-[0.4em] text-sky-500 font-semibold mb-4">Adyatama Islamic School</p>
-            <h1 class="text-4xl md:text-5xl font-bold leading-tight text-slate-900 mb-6">{{ $settings['hero_title'] ?? 'Membentuk Generasi Qurani dan Berprestasi' }}</h1>
-            <p class="text-lg text-slate-600 mb-8">{{ $settings['hero_description'] ?? 'Sekolah Islam terpadu dengan fokus pada karakter dan prestasi akademik.' }}</p>
+            <p class="text-sm uppercase tracking-[0.4em] text-sky-500 font-semibold mb-4">{{ $settings['site_name'] ?? 'Adyatama Islamic School' }}</p>
+            <h1 class="text-4xl md:text-5xl font-bold leading-tight text-slate-900 mb-6">{{ $settings['site_tagline'] ?? 'Membentuk Generasi Qurani dan Berprestasi' }}</h1>
+            <p class="text-lg text-slate-600 mb-8">{{ $settings['site_description'] ?? 'Sekolah Islam terpadu dengan fokus pada karakter dan prestasi akademik.' }}</p>
             <div class="flex flex-wrap gap-4">
                 <a href="/daftar-online" class="inline-flex items-center gap-2 bg-sky-600 text-white px-6 py-3 rounded-full font-semibold shadow-lg shadow-sky-200">
                     Daftar Online MI
@@ -19,8 +19,9 @@
         <div class="relative">
             <div class="absolute -inset-4 bg-sky-100 rounded-3xl blur-xl"></div>
             <div class="relative bg-white rounded-3xl shadow-xl overflow-hidden">
-                @if($bgImage = $settings['hero_bg_image'] ?? null)
-                     <img src="{{ $bgImage }}" alt="{{ $settings['hero_title'] ?? 'Hero Image' }}" class="w-full h-auto">
+                @php($heroImage = media_url($settings['hero_bg_image'] ?? null))
+                @if($heroImage)
+                     <img src="{{ $heroImage }}" alt="{{ $settings['site_name'] ?? 'Hero Image' }}" class="w-full h-auto">
                 @elseif($featuredImage = $featuredPost?->featured_image_url)
                     <img src="{{ $featuredImage }}" alt="{{ $featuredPost->title }}" class="w-full h-auto">
                 @endif

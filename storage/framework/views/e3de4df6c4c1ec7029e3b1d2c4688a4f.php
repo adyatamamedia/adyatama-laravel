@@ -4,9 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo e(($title ?? $settings['site_name'] ?? 'ADYATAMA SCHOOL') . ' | ADYATAMA SCHOOL'); ?></title>
+    <title><?php echo e(($title ?? $settings['site_name'] ?? 'ADYATAMA SCHOOL') . ' | ' . ($settings['site_name'] ?? 'ADYATAMA SCHOOL')); ?></title>
     <meta name="description" content="<?php echo e($settings['site_description'] ?? 'Website resmi ADYATAMA SCHOOL'); ?>">
-    <?php ($favicon = media_url($settings['favicon'] ?? null)); ?>
+    <?php ($favicon = media_url($settings['site_favicon'] ?? null)); ?>
     <?php if($favicon): ?>
         <link rel="icon" href="<?php echo e($favicon); ?>">
     <?php endif; ?>
@@ -21,6 +21,8 @@
                     <?php ($siteLogo = media_url($settings['site_logo'] ?? null)); ?>
                     <?php if($siteLogo): ?>
                         <img src="<?php echo e($siteLogo); ?>" alt="<?php echo e($settings['site_name'] ?? 'ADYATAMA SCHOOL'); ?>" class="h-12 w-auto">
+                    <?php else: ?>
+                        <span class="text-xl font-bold text-slate-800"><?php echo e($settings['site_name'] ?? 'ADYATAMA SCHOOL'); ?></span>
                     <?php endif; ?>
                 </a>
 
@@ -421,9 +423,9 @@
                 </div>
                 <div>
                     <p class="font-medium mb-2">Kontak</p>
-                    <p class="text-sm"><?php echo e($settings['address'] ?? 'Alamat belum tersedia'); ?></p>
-                    <p class="text-sm">Telp: <?php echo e($settings['phone'] ?? '-'); ?></p>
-                    <p class="text-sm">Email: <?php echo e($settings['email'] ?? '-'); ?></p>
+                    <p class="text-sm"><?php echo e($settings['school_address'] ?? 'Alamat belum tersedia'); ?></p>
+                    <p class="text-sm">Telp: <?php echo e($settings['school_phone'] ?? '-'); ?></p>
+                    <p class="text-sm">Email: <?php echo e($settings['school_email'] ?? '-'); ?></p>
                 </div>
                 <div>
                     <p class="font-medium mb-2">Navigasi</p>

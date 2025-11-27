@@ -4,9 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ ($title ?? $settings['site_name'] ?? 'ADYATAMA SCHOOL') . ' | ADYATAMA SCHOOL' }}</title>
+    <title>{{ ($title ?? $settings['site_name'] ?? 'ADYATAMA SCHOOL') . ' | ' . ($settings['site_name'] ?? 'ADYATAMA SCHOOL') }}</title>
     <meta name="description" content="{{ $settings['site_description'] ?? 'Website resmi ADYATAMA SCHOOL' }}">
-    @php($favicon = media_url($settings['favicon'] ?? null))
+    @php($favicon = media_url($settings['site_favicon'] ?? null))
     @if($favicon)
         <link rel="icon" href="{{ $favicon }}">
     @endif
@@ -21,6 +21,8 @@
                     @php($siteLogo = media_url($settings['site_logo'] ?? null))
                     @if($siteLogo)
                         <img src="{{ $siteLogo }}" alt="{{ $settings['site_name'] ?? 'ADYATAMA SCHOOL' }}" class="h-12 w-auto">
+                    @else
+                        <span class="text-xl font-bold text-slate-800">{{ $settings['site_name'] ?? 'ADYATAMA SCHOOL' }}</span>
                     @endif
                 </a>
 
@@ -415,9 +417,9 @@
                 </div>
                 <div>
                     <p class="font-medium mb-2">Kontak</p>
-                    <p class="text-sm">{{ $settings['address'] ?? 'Alamat belum tersedia' }}</p>
-                    <p class="text-sm">Telp: {{ $settings['phone'] ?? '-' }}</p>
-                    <p class="text-sm">Email: {{ $settings['email'] ?? '-' }}</p>
+                    <p class="text-sm">{{ $settings['school_address'] ?? 'Alamat belum tersedia' }}</p>
+                    <p class="text-sm">Telp: {{ $settings['school_phone'] ?? '-' }}</p>
+                    <p class="text-sm">Email: {{ $settings['school_email'] ?? '-' }}</p>
                 </div>
                 <div>
                     <p class="font-medium mb-2">Navigasi</p>
