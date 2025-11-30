@@ -1,4 +1,7 @@
-@extends('layouts.public', ['title' => $selectedCategory ? 'Berita - ' . ($categories->firstWhere('slug', $selectedCategory)?->name ?? 'Berita') : 'Berita'])
+@extends('layouts.public', [
+    'title' => $selectedTag ? 'Berita Tag: ' . $selectedTag : ($selectedCategory ? 'Berita - ' . ($categories->firstWhere('slug', $selectedCategory)?->name ?? 'Berita') : 'Berita'),
+    'description' => $selectedTag ? 'Artikel dengan tag ' . $selectedTag : ($selectedCategory ? 'Artikel dan informasi terbaru seputar ' . strtolower($categories->firstWhere('slug', $selectedCategory)?->name) : 'Kumpulan artikel dan informasi terbaru dari sekolah')
+])
 
 @section('content')
 <!-- Header Section -->
@@ -22,14 +25,18 @@
             </nav>
 
             <h1 class="text-4xl lg:text-5xl font-bold text-slate-900 mb-3">
-                @if($selectedCategory)
+                @if($selectedTag)
+                    Berita Tag: <span class="text-primary-600">#{{ $selectedTag }}</span>
+                @elseif($selectedCategory)
                     Berita: {{ $categories->firstWhere('slug', $selectedCategory)?->name }}
                 @else
                     Berita Terbaru
                 @endif
             </h1>
             <p class="text-slate-600 max-w-2xl mx-auto">
-                @if($selectedCategory)
+                @if($selectedTag)
+                    Artikel dengan tag <strong>#{{ $selectedTag }}</strong>
+                @elseif($selectedCategory)
                     Artikel dan informasi terbaru seputar {{ strtolower($categories->firstWhere('slug', $selectedCategory)?->name) }}
                 @else
                     Kumpulan artikel dan informasi terbaru dari sekolah
@@ -39,25 +46,8 @@
 
         <!-- Filter Bar -->
         <div class="max-w-4xl mx-auto">
-            <!-- Search -->
-            <form action="{{ route('posts.index') }}" method="GET" class="mb-4">
-                @if($selectedCategory)
-                    <input type="hidden" name="category" value="{{ $selectedCategory }}">
-                @endif
-                <div class="relative">
-                    <input type="text" 
-                           name="q" 
-                           value="{{ $search ?? '' }}"
-                           placeholder="Cari berita..." 
-                           class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-100 rounded-lg text-sm transition-all">
-                    <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                </div>
-            </form>
-
             <!-- Category Filter -->
-            <div class="flex gap-2 flex-wrap justify-center">
+            <div class="flex gap-2 flex-wrap justify-center mb-4">
                 <a href="{{ route('posts.index') }}" 
                    class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ !$selectedCategory ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                     Semua
@@ -70,8 +60,48 @@
                 @endforeach
             </div>
 
+            <!-- Search -->
+            <form action="{{ route('posts.index') }}" method="GET" class="mb-4">
+                @if($selectedCategory)
+                    <input type="hidden" name="category" value="{{ $selectedCategory }}">
+                @endif
+                @if($selectedTag)
+                    <input type="hidden" name="tag" value="{{ $selectedTag }}">
+                @endif
+                <div class="relative">
+                    <input type="text" 
+                           name="search" 
+                           value="{{ $search ?? '' }}"
+                           placeholder="Cari berita..." 
+                           class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-100 rounded-lg text-sm transition-all">
+                    <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </form>
+
+            <!-- Popular Tags -->
+            @if(!empty($popularTags))
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                <div class="flex items-center gap-2 mb-3">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                    </svg>
+                    <span class="text-sm font-semibold text-slate-700">Tag Populer:</span>
+                </div>
+                <div class="flex gap-2 flex-wrap">
+                    @foreach($popularTags as $tag)
+                        <a href="{{ route('posts.index', ['tag' => $tag]) }}" 
+                           class="px-3 py-1 text-xs font-medium rounded-full transition-all {{ $selectedTag == $tag ? 'bg-primary-100 text-primary-700 ring-2 ring-primary-200' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' }}">
+                            #{{ $tag }}
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
             <!-- Active Filters Info -->
-            @if($selectedCategory || $search)
+            @if($selectedCategory || $selectedTag || $search)
                 <div class="text-center mt-4 text-sm text-slate-600">
                     Menampilkan
                     @if($search)
@@ -82,6 +112,12 @@
                     @endif
                     @if($selectedCategory)
                         <strong>{{ $categories->firstWhere('slug', $selectedCategory)?->name }}</strong>
+                    @endif
+                    @if(($selectedCategory || $search) && $selectedTag)
+                        dengan
+                    @endif
+                    @if($selectedTag)
+                        tag <strong class="text-primary-600">#{{ $selectedTag }}</strong>
                     @endif
                     · 
                     <a href="{{ route('posts.index') }}" class="text-primary-600 hover:text-primary-700 font-medium">

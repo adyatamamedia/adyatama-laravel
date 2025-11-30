@@ -113,7 +113,7 @@
                             </div>
                         <?php endif; ?>
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
-                        <p class="absolute bottom-4 left-4 text-white font-semibold"><?php echo e($gallery->title); ?></p>
+                        <p class="absolute bottom-4 left-4 text-white font-semibold opacity-0 group-hover:opacity-100 transition"><?php echo e($gallery->title); ?></p>
                     </div>
                 </a>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -157,7 +157,7 @@
 
 <section class="py-16">
     <div class="container mx-auto px-4 text-center">
-        <h2 class="text-3xl font-bold mb-4">Siap bergabung dengan ADYATAMA SCHOOL?</h2>
+        <h2 class="text-3xl font-bold mb-4">Siap bergabung dengan <?php echo e($settings['site_name'] ?? 'ADYATAMA SCHOOL'); ?>?</h2>
         <p class="text-lg text-slate-600 mb-8">Isi formulir pendaftaran online MI dan tim kami akan menghubungi dalam 1x24 jam.</p>
         <a href="/daftar-online" class="inline-flex items-center gap-2 bg-emerald-500 text-white px-8 py-3 rounded-full font-semibold">
             Mulai Pendaftaran
@@ -166,4 +166,9 @@
 </section>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.public', ['title' => 'Beranda'], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\adyatama-school2\resources\views/home.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.public', [
+    'title' => 'Beranda',
+    'title_override' => ($settings['site_name'] ?? 'ADYATAMA SCHOOL') . ' | ' . ($settings['site_tagline'] ?? 'Membentuk Generasi Qurani dan Berprestasi'),
+    'description' => $settings['site_description'] ?? 'Sekolah Islam terpadu dengan fokus pada karakter dan prestasi akademik.',
+    'image' => $settings['hero_bg_image'] ?? null
+], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\adyatama-school2\resources\views/home.blade.php ENDPATH**/ ?>

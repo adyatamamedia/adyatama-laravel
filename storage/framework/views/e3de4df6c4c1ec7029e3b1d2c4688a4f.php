@@ -4,8 +4,42 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php echo e(($title ?? $settings['site_name'] ?? 'ADYATAMA SCHOOL') . ' | ' . ($settings['site_name'] ?? 'ADYATAMA SCHOOL')); ?></title>
-    <meta name="description" content="<?php echo e($settings['site_description'] ?? 'Website resmi ADYATAMA SCHOOL'); ?>">
+    
+    <?php
+        $siteName = $settings['site_title'] ?? 'ADYATAMA SCHOOL';
+        $pageTitle = $title_override ?? (isset($title) ? "$title | $siteName" : $siteName);
+        $metaDescription = $description ?? $settings['meta_description'] ?? $settings['site_description'] ?? 'Website resmi ADYATAMA SCHOOL';
+        
+        // Determine OG Image
+        $ogImage = $image ?? $settings['og_image'] ?? $settings['site_logo'] ?? null;
+        $ogImage = media_url($ogImage);
+        
+        $currentUrl = url()->current();
+        $ogType = $type ?? 'website';
+    ?>
+
+    <title><?php echo e($pageTitle); ?></title>
+    <meta name="description" content="<?php echo e($metaDescription); ?>">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="<?php echo e($ogType); ?>">
+    <meta property="og:url" content="<?php echo e($currentUrl); ?>">
+    <meta property="og:title" content="<?php echo e($pageTitle); ?>">
+    <meta property="og:description" content="<?php echo e($metaDescription); ?>">
+    <meta property="og:site_name" content="<?php echo e($siteName); ?>">
+    <?php if($ogImage): ?>
+    <meta property="og:image" content="<?php echo e($ogImage); ?>">
+    <?php endif; ?>
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="<?php echo e($currentUrl); ?>">
+    <meta property="twitter:title" content="<?php echo e($pageTitle); ?>">
+    <meta property="twitter:description" content="<?php echo e($metaDescription); ?>">
+    <?php if($ogImage): ?>
+    <meta property="twitter:image" content="<?php echo e($ogImage); ?>">
+    <?php endif; ?>
+
     <?php ($favicon = media_url($settings['site_favicon'] ?? null)); ?>
     <?php if($favicon): ?>
         <link rel="icon" href="<?php echo e($favicon); ?>">
@@ -15,19 +49,92 @@
 
 <body class="font-sans antialiased bg-slate-50 text-slate-900">
     <div class="min-h-screen flex flex-col">
+        <!-- Event Announcement Banner -->
+        <?php if(!empty($settings['event_announcement'])): ?>
+        <div id="eventAnnouncementBanner" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white h-[30px] relative z-40 flex items-center justify-center">
+            <!-- Desktop Version -->
+            <div class="hidden md:flex items-center gap-2 px-4">
+                <svg class="w-3.5 h-3.5 shrink-0 animate-bounce" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                </svg>
+                <p class="text-xs font-medium leading-none"><?php echo e($settings['event_announcement']); ?></p>
+                <button onclick="closeEventBanner()" class="shrink-0 p-1 hover:bg-white/20 rounded transition-colors flex items-center justify-center ml-2" aria-label="Tutup pengumuman">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Mobile Version with Ticker -->
+            <div class="md:hidden flex items-center w-full px-8">
+                <svg class="w-3.5 h-3.5 shrink-0 animate-bounce mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                </svg>
+                <div class="flex-1 overflow-hidden relative">
+                    <div class="event-ticker-wrapper">
+                        <div class="event-ticker-content inline-block whitespace-nowrap animate-event-ticker">
+                            <span class="text-xs font-medium leading-none"><?php echo e($settings['event_announcement']); ?></span>
+                            <span class="inline-block mx-4">•</span>
+                            <span class="text-xs font-medium leading-none"><?php echo e($settings['event_announcement']); ?></span>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="closeEventBanner()" class="absolute right-2 p-1 hover:bg-white/20 rounded transition-colors flex items-center justify-center" aria-label="Tutup pengumuman">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <style>
+            .event-ticker-wrapper {
+                position: relative;
+            }
+            
+            @keyframes event-ticker {
+                0% {
+                    transform: translateX(0);
+                }
+                100% {
+                    transform: translateX(-50%);
+                }
+            }
+            
+            .animate-event-ticker {
+                animation: event-ticker 15s linear infinite;
+            }
+            
+            @media (min-width: 768px) {
+                .animate-event-ticker {
+                    animation: none;
+                }
+            }
+        </style>
+
+        <script>
+            function closeEventBanner() {
+                const banner = document.getElementById('eventAnnouncementBanner');
+                if (banner) {
+                    banner.style.display = 'none';
+                }
+            }
+        </script>
+        <?php endif; ?>
+
         <header class="bg-white/90 backdrop-blur border-b border-slate-100 sticky top-0 z-30">
             <div class="container mx-auto px-4 py-4 flex items-center justify-between">
                 <a href="/" class="flex items-center gap-3">
                     <?php ($siteLogo = media_url($settings['site_logo'] ?? null)); ?>
                     <?php if($siteLogo): ?>
-                        <img src="<?php echo e($siteLogo); ?>" alt="<?php echo e($settings['site_name'] ?? 'ADYATAMA SCHOOL'); ?>" class="h-12 w-auto">
+                        <img src="<?php echo e($siteLogo); ?>" alt="<?php echo e($settings['site_title'] ?? 'ADYATAMA SCHOOL'); ?>" class="h-12 w-auto">
                     <?php else: ?>
-                        <span class="text-xl font-bold text-slate-800"><?php echo e($settings['site_name'] ?? 'ADYATAMA SCHOOL'); ?></span>
+                        <span class="text-xl font-bold text-slate-800"><?php echo e($settings['site_title'] ?? 'ADYATAMA SCHOOL'); ?></span>
                     <?php endif; ?>
                 </a>
 
 
-                <nav class="hidden md:flex items-center gap-6" aria-label="Main navigation">
+                <nav class="hidden md:flex items-center gap-2" aria-label="Main navigation">
                     <!-- Tentang Kami Dropdown -->
                     <div class="relative group">
                         <button class="<?php echo e(request()->is('page*') ? 'text-sky-600 font-semibold bg-sky-50' : 'text-slate-600 hover:text-sky-600 hover:bg-slate-100'); ?> text-sm flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-200" aria-haspopup="true" aria-expanded="false">
@@ -65,9 +172,11 @@
                     </button>
 
                     <!-- Simple Menu Items -->
-                    <a href="/pengumuman" class="<?php echo e(request()->is('pengumuman*') ? 'text-sky-600 font-semibold' : 'text-slate-600 hover:text-sky-600'); ?> text-sm transition-colors">Pengumuman</a>
-                    <a href="/galleries" class="<?php echo e(request()->is('galleries*') ? 'text-sky-600 font-semibold' : 'text-slate-600 hover:text-sky-600'); ?> text-sm transition-colors">Galeri</a>
-                    <a href="/kontak" class="<?php echo e(request()->is('kontak*') ? 'text-sky-600 font-semibold' : 'text-slate-600 hover:text-sky-600'); ?> text-sm transition-colors">Kontak Kami</a>
+                    <a href="/pengumuman" class="<?php echo e(request()->is('pengumuman*') ? 'text-sky-600 font-semibold bg-sky-50' : 'text-slate-600 hover:text-sky-600 hover:bg-slate-100'); ?> text-sm px-3 py-2 rounded-md transition-all duration-200">Pengumuman</a>
+                    <a href="/authors" class="<?php echo e(request()->is('authors*') ? 'text-sky-600 font-semibold bg-sky-50' : 'text-slate-600 hover:text-sky-600 hover:bg-slate-100'); ?> text-sm px-3 py-2 rounded-md transition-all duration-200">Author</a>
+                    <a href="/galleries" class="<?php echo e(request()->is('galleries*') ? 'text-sky-600 font-semibold bg-sky-50' : 'text-slate-600 hover:text-sky-600 hover:bg-slate-100'); ?> text-sm px-3 py-2 rounded-md transition-all duration-200">Galeri</a>
+                    <a href="/guru-staff" class="<?php echo e(request()->is('guru-staff*') ? 'text-sky-600 font-semibold bg-sky-50' : 'text-slate-600 hover:text-sky-600 hover:bg-slate-100'); ?> text-sm px-3 py-2 rounded-md transition-all duration-200">Guru & Staff</a>
+                    <a href="/kontak" class="<?php echo e(request()->is('kontak*') ? 'text-sky-600 font-semibold bg-sky-50' : 'text-slate-600 hover:text-sky-600 hover:bg-slate-100'); ?> text-sm px-3 py-2 rounded-md transition-all duration-200">Kontak Kami</a>
                 </nav>
                 <a href="/daftar-online"
                    class="hidden md:inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold bg-sky-600 text-white hover:bg-sky-700 transition-all">
@@ -82,6 +191,90 @@
                 </button>
             </div>
         </header>
+
+        <!-- Breaking News Ticker -->
+        <?php if(isset($breakingNews) && $breakingNews->count() > 0): ?>
+        <section class="bg-gradient-to-r from-red-600 to-red-700 text-white sticky top-[80px] z-20 shadow-md">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center gap-3 py-2">
+                    <!-- Breaking News Label -->
+                    <div class="shrink-0 flex items-center bg-white text-red-600 p-2 rounded-lg shadow-md">
+                        <svg class="w-5 h-5 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
+                            <path d="M13 7h-2v6h2V7zm0 8h-2v2h2v-2z"/>
+                        </svg>
+                    </div>
+
+                    <!-- Ticker Content -->
+                    <div class="flex-1 overflow-hidden relative">
+                        <div class="ticker-wrapper">
+                            <div class="ticker-content inline-flex items-center gap-8 whitespace-nowrap animate-ticker">
+                                <?php $__currentLoopData = $breakingNews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $news): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <a href="<?php echo e(route('posts.show', $news->slug)); ?>" class="inline-flex items-center gap-3 hover:text-yellow-300 transition-colors">
+                                        <span class="font-medium"><?php echo e($news->title); ?></span>
+                                        <span class="text-yellow-400">|</span>
+                                        <span class="inline-flex items-center gap-1.5 text-sm text-yellow-100">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            <?php echo e($news->published_at?->format('d/m/Y') ?? $news->created_at->format('d/m/Y')); ?>
+
+                                        </span>
+                                    </a>
+                                    <span class="text-yellow-400 text-xl">•</span>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <!-- Duplicate for seamless loop -->
+                                <?php $__currentLoopData = $breakingNews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $news): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <a href="<?php echo e(route('posts.show', $news->slug)); ?>" class="inline-flex items-center gap-3 hover:text-yellow-300 transition-colors">
+                                        <span class="font-medium"><?php echo e($news->title); ?></span>
+                                        <span class="text-yellow-400">|</span>
+                                        <span class="inline-flex items-center gap-1.5 text-sm text-yellow-100">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            <?php echo e($news->published_at?->format('d/m/Y') ?? $news->created_at->format('d/m/Y')); ?>
+
+                                        </span>
+                                    </a>
+                                    <span class="text-yellow-400 text-xl">•</span>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Close Button -->
+                    <button onclick="this.closest('section').remove()" class="shrink-0 p-1 hover:bg-white/20 rounded transition-colors mr-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <style>
+            .ticker-wrapper {
+                position: relative;
+            }
+            
+            @keyframes ticker {
+                0% {
+                    transform: translateX(0);
+                }
+                100% {
+                    transform: translateX(-50%);
+                }
+            }
+            
+            .animate-ticker {
+                animation: ticker 40s linear infinite;
+            }
+            
+            .animate-ticker:hover {
+                animation-play-state: paused;
+            }
+        </style>
+        <?php endif; ?>
 
         <!-- Mobile Menu Overlay -->
         <div id="mobileMenuOverlay" class="fixed inset-0 bg-black/50 z-40 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
@@ -112,7 +305,9 @@
                 <a href="/posts" class="block px-3 py-2 text-sm rounded-md <?php echo e(request()->is('posts*') ? 'bg-sky-50 text-sky-600 font-medium' : 'text-slate-600 hover:bg-slate-50'); ?>">Berita</a>
                 <a href="/pengumuman" class="block px-3 py-2 text-sm rounded-md <?php echo e(request()->is('pengumuman*') ? 'bg-sky-50 text-sky-600 font-medium' : 'text-slate-600 hover:bg-slate-50'); ?>">Pengumuman</a>
                 <a href="/ekstrakurikuler" class="block px-3 py-2 text-sm rounded-md <?php echo e(request()->is('ekstrakurikuler*') ? 'bg-sky-50 text-sky-600 font-medium' : 'text-slate-600 hover:bg-slate-50'); ?>">Ekstrakurikuler</a>
+                <a href="/authors" class="block px-3 py-2 text-sm rounded-md <?php echo e(request()->is('authors*') ? 'bg-sky-50 text-sky-600 font-medium' : 'text-slate-600 hover:bg-slate-50'); ?>">Author</a>
                 <a href="/galleries" class="block px-3 py-2 text-sm rounded-md <?php echo e(request()->is('galleries*') ? 'bg-sky-50 text-sky-600 font-medium' : 'text-slate-600 hover:bg-slate-50'); ?>">Galeri</a>
+                <a href="/guru-staff" class="block px-3 py-2 text-sm rounded-md <?php echo e(request()->is('guru-staff*') ? 'bg-sky-50 text-sky-600 font-medium' : 'text-slate-600 hover:bg-slate-50'); ?>">Guru & Staff</a>
                 <a href="/kontak" class="block px-3 py-2 text-sm rounded-md <?php echo e(request()->is('kontak*') ? 'bg-sky-50 text-sky-600 font-medium' : 'text-slate-600 hover:bg-slate-50'); ?>">Kontak Kami</a>
                 
                 <div class="mt-4">
@@ -418,7 +613,11 @@
         <footer class="bg-slate-900 text-slate-200 mt-16">
             <div class="container mx-auto px-4 py-12 grid md:grid-cols-3 gap-8">
                 <div>
-                    <p class="text-xl font-semibold mb-2"><?php echo e($settings['site_name'] ?? 'ADYATAMA SCHOOL'); ?></p>
+                    <?php ($siteFavicon = media_url($settings['site_favicon'] ?? null)); ?>
+                    <?php if($siteFavicon): ?>
+                        <img src="<?php echo e($siteFavicon); ?>" alt="<?php echo e($settings['site_title'] ?? 'ADYATAMA SCHOOL'); ?>" class="h-12 w-auto mb-3">
+                    <?php endif; ?>
+                    <p class="text-xl font-semibold mb-2"><?php echo e($settings['site_title'] ?? 'ADYATAMA SCHOOL'); ?></p>
                     <p class="text-sm text-slate-400"><?php echo e($settings['site_description'] ?? ''); ?></p>
                 </div>
                 <div>
@@ -438,7 +637,7 @@
                 </div>
             </div>
             <div class="border-t border-slate-800 py-4 text-center text-xs text-slate-500">
-                &copy; <?php echo e(date('Y')); ?> ADYATAMA SCHOOL. All rights reserved.
+                &copy; <?php echo e(date('Y')); ?> <?php echo e($settings['site_title'] ?? 'ADYATAMA SCHOOL'); ?>. All rights reserved. | Build & Developed with 🧡 by <a href="#" target="_blank" class="text-slate-500 hover:underline">Adyatama TECH</a>
             </div>
         </footer>
     </div>

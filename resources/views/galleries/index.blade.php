@@ -1,4 +1,7 @@
-@extends('layouts.public', ['title' => $selectedExtra ? 'Galeri - ' . ($extracurriculars->firstWhere('slug', $selectedExtra)?->name ?? 'Galeri') : 'Galeri'])
+@extends('layouts.public', [
+    'title' => $selectedExtra ? 'Galeri - ' . ($extracurriculars->firstWhere('slug', $selectedExtra)?->name ?? 'Galeri') : 'Galeri',
+    'description' => $selectedExtra ? 'Kumpulan foto dan dokumentasi kegiatan ' . ($extracurriculars->firstWhere('slug', $selectedExtra)?->name) : 'Kumpulan foto dan dokumentasi kegiatan sekolah dan ekstrakurikuler'
+])
 
 @section('content')
 <!-- Header Section -->
@@ -140,7 +143,7 @@
                                 {{ $gallery->title }}
                             </h3>
                             @if($gallery->description)
-                                <p class="text-sm text-slate-500 line-clamp-2">{{ $gallery->description }}</p>
+                                <p class="text-sm text-slate-500 line-clamp-2">{{ strip_tags($gallery->description) }}</p>
                             @endif
                         </div>
                     </a>

@@ -1,4 +1,8 @@
-@extends('layouts.public', ['title' => $page->title])
+@extends('layouts.public', [
+    'title' => $page->title,
+    'description' => $page->excerpt ?? Str::limit(strip_tags($page->content), 150),
+    'type' => 'article'
+])
 
 @section('content')
 <!-- Header Section -->

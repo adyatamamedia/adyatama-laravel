@@ -1,70 +1,99 @@
+<?php
+    // Get featured image URL using accessor (falls back to first gallery item)
+    $featuredImageUrl = $gallery->featured_image_url 
+        ?: ($gallery->items->isNotEmpty() ? $gallery->items->first()->image_url : null);
+?>
+
+
+
 <?php $__env->startSection('content'); ?>
-<!-- Header Section -->
-<section class="py-12 bg-gradient-to-br from-sky-50 via-white to-blue-50 border-b border-slate-100">
-    <div class="container mx-auto px-4">
+<!-- Header Section with Background Image -->
+<section class="relative py-20 lg:py-28 border-b border-slate-100 overflow-hidden">
+    <!-- Background Image with Overlay -->
+    <?php if($featuredImageUrl): ?>
+    <div class="absolute inset-0 z-0">
+        <img src="<?php echo e($featuredImageUrl); ?>" alt="<?php echo e($gallery->title); ?>" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-black/70"></div>
+    </div>
+    <?php else: ?>
+    <div class="absolute inset-0 z-0 bg-gradient-to-br from-sky-900 via-slate-800 to-blue-900">
+        <div class="absolute inset-0 bg-black/30"></div>
+    </div>
+    <?php endif; ?>
+    
+    <!-- Content -->
+    <div class="container mx-auto px-4 relative z-10">
         <div class="max-w-5xl mx-auto">
             <!-- Breadcrumb -->
-            <nav class="mb-6 flex justify-center">
-                <ol class="flex items-center gap-2 text-sm text-slate-600">
+            <nav class="mb-8 flex justify-center">
+                <ol class="flex items-center gap-2 text-sm text-white/80">
                     <li>
-                        <a href="/" class="hover:text-primary-600 transition-colors">Beranda</a>
+                        <a href="/" class="hover:text-white transition-colors">Beranda</a>
                     </li>
                     <li>
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                         </svg>
                     </li>
                     <li>
-                        <a href="<?php echo e(route('galleries.index')); ?>" class="hover:text-primary-600 transition-colors">Galeri</a>
+                        <a href="<?php echo e(route('galleries.index')); ?>" class="hover:text-white transition-colors">Galeri</a>
                     </li>
                     <li>
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                         </svg>
                     </li>
-                    <li class="font-medium text-slate-900"><?php echo e(Str::limit($gallery->title, 40)); ?></li>
+                    <li class="font-medium text-white"><?php echo e(Str::limit($gallery->title, 40)); ?></li>
                 </ol>
             </nav>
 
-            <!-- Title & Category -->
-            <div class="text-center mb-6">
-                <?php if($gallery->extracurricular?->name): ?>
-                    <span class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r from-primary-500 to-primary-600 text-white mb-4 shadow-sm">
-                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                        </svg>
-                        <?php echo e($gallery->extracurricular->name); ?>
-
-                    </span>
-                <?php endif; ?>
-                
-                <h1 class="text-4xl lg:text-5xl font-bold text-slate-900 mb-4 leading-tight"><?php echo e($gallery->title); ?></h1>
+            <!-- Title -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-2xl"><?php echo e($gallery->title); ?></h1>
             </div>
 
-            <!-- Meta Info -->
-            <div class="flex items-center justify-center gap-6 flex-wrap text-sm text-slate-600">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-bold text-xs">
-                        <?php echo e(strtoupper(substr($gallery->author?->fullname ?? 'A', 0, 1))); ?>
+            <!-- Meta Info - Compact & Consistent -->
+            <div class="flex items-center justify-center gap-3 flex-wrap text-sm text-white/90 max-w-4xl mx-auto">
+                <!-- Author -->
+                <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm pl-1 pr-3 py-1.5 rounded-full min-w-0">
+                    <?php if($gallery->author?->photo_url): ?>
+                        <img src="<?php echo e($gallery->author->photo_url); ?>" 
+                             alt="<?php echo e($gallery->author->fullname); ?>" 
+                             class="w-6 h-6 rounded-full object-cover shrink-0">
+                    <?php else: ?>
+                        <div class="w-6 h-6 rounded-full bg-white/30 flex items-center justify-center text-white font-bold text-xs shrink-0">
+                            <?php echo e(strtoupper(substr($gallery->author?->fullname ?? 'A', 0, 1))); ?>
 
-                    </div>
-                    <span class="font-medium"><?php echo e($gallery->author?->fullname ?? 'Admin'); ?></span>
+                        </div>
+                    <?php endif; ?>
+                    <span class="font-medium truncate"><?php echo e($gallery->author?->fullname ?? 'Admin'); ?></span>
                 </div>
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                
+                <!-- Extracurricular -->
+                <?php if($gallery->extracurricular?->name): ?>
+                <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full min-w-0">
+                    <svg class="w-4 h-4 text-white/70 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                    </svg>
+                    <span class="truncate"><?php echo e($gallery->extracurricular->name); ?></span>
+                </div>
+                <?php endif; ?>
+                
+                <!-- Date -->
+                <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                    <svg class="w-4 h-4 text-white/70 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
-                    <span><?php echo e($gallery->created_at?->format('d M Y')); ?></span>
-                    <span class="text-slate-400">•</span>
-                    <span><?php echo e($gallery->created_at?->format('H:i')); ?> WIB</span>
+                    <span class="whitespace-nowrap"><?php echo e($gallery->created_at?->format('d M Y')); ?></span>
                 </div>
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                
+                <!-- Views -->
+                <div class="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                    <svg class="w-4 h-4 text-white/70 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                     </svg>
-                    <span class="font-semibold text-primary-600"><?php echo e(number_format($gallery->view_count ?? 0)); ?></span>
-                    <span>views</span>
+                    <span class="font-semibold whitespace-nowrap"><?php echo e(number_format($gallery->view_count ?? 0)); ?></span>
                 </div>
             </div>
         </div>
@@ -116,8 +145,9 @@
             <!-- Description & Share Section -->
             <?php if($gallery->description): ?>
             <div class="mt-12 pt-8 border-t border-slate-200">
-                <div class="prose prose-slate max-w-none mb-8">
-                    <p class="text-slate-700 leading-relaxed text-lg"><?php echo e($gallery->description); ?></p>
+                <div class="content-body">
+                    <?php echo $gallery->description; ?>
+
                 </div>
             </div>
             <?php endif; ?>
@@ -325,7 +355,7 @@ unset($__errorArgs, $__bag); ?>
         </div>
 
         <!-- Thumbnails Preview -->
-        <div class="p-4 lg:p-6 shrink-0" onclick="event.stopPropagation()">
+        <div class="p-4 pb-20 lg:pb-6 shrink-0" onclick="event.stopPropagation()">
             <div id="lightbox-thumbnails" class="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
                 <!-- Thumbnails will be injected here -->
             </div>
@@ -462,4 +492,9 @@ unset($__errorArgs, $__bag); ?>
 
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.public', ['title' => $gallery->title], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\adyatama-school2\resources\views/galleries/show.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.public', [
+    'title' => $gallery->title,
+    'description' => $gallery->description ? strip_tags($gallery->description) : 'Galeri Foto ' . $gallery->title,
+    'image' => $featuredImageUrl ?? asset('images/default-og.jpg'),
+    'type' => 'article'
+], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\adyatama-school2\resources\views/galleries/show.blade.php ENDPATH**/ ?>

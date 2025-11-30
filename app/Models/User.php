@@ -56,4 +56,19 @@ class User extends Authenticatable
     {
         return 'password_hash';
     }
+
+    public function getPhotoUrlAttribute(): ?string
+    {
+        return media_url($this->photo ?? null);
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class, 'author_id');
+    }
+
+    public function galleries()
+    {
+        return $this->hasMany(Gallery::class, 'author_id');
+    }
 }

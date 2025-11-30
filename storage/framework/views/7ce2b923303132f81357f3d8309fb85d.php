@@ -151,4 +151,9 @@
 
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.public', ['title' => $person->nama_lengkap], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\adyatama-school2\resources\views/guru-staff/show.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.public', [
+    'title' => $person->nama_lengkap,
+    'description' => $person->jabatan . ($person->bidang ? ' - ' . $person->bidang : ''),
+    'image' => $person->photo_url,
+    'type' => 'profile'
+], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\adyatama-school2\resources\views/guru-staff/show.blade.php ENDPATH**/ ?>

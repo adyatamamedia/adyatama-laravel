@@ -1,4 +1,7 @@
-@extends('layouts.public', ['title' => 'Ekstrakurikuler'])
+@extends('layouts.public', [
+    'title' => 'Ekstrakurikuler',
+    'description' => 'Berbagai kegiatan pengembangan minat, bakat, dan karakter siswa di ADYATAMA SCHOOL.'
+])
 
 @section('content')
 <!-- Header Section -->

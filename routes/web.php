@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ExtracurricularController;
 use App\Http\Controllers\GalleryController;
@@ -31,8 +32,14 @@ Route::get('/ekstrakurikuler', [ExtracurricularController::class, 'index'])->nam
 Route::get('/guru-staff', [GuruStaffController::class, 'index'])->name('guru-staff.index');
 Route::get('/guru-staff/{guruStaff}', [GuruStaffController::class, 'show'])->name('guru-staff.show');
 
+Route::get('/authors', [AuthorController::class, 'index'])->name('authors.index');
+Route::get('/authors/{user:username}', [AuthorController::class, 'show'])->name('authors.show');
+
 Route::get('/page/{page:slug}', [PageController::class, 'show'])->name('pages.show');
 Route::get('/kontak', ContactController::class)->name('contact');
 
 Route::get('/daftar-online', [StudentApplicationController::class, 'create'])->name('registration.create');
 Route::post('/daftar-online', [StudentApplicationController::class, 'store'])->name('registration.store');
+
+// Sitemap Route
+Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index']);

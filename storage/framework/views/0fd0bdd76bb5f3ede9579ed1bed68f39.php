@@ -336,4 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <?php $__env->stopPush(); ?>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.public', ['title' => 'Daftar Online MI'], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\adyatama-school2\resources\views/registration/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.public', [
+    'title' => 'Daftar Online MI',
+    'description' => 'Formulir Pendaftaran Online MI. Isi data calon siswa dengan lengkap. Tim kami akan menghubungi melalui WhatsApp dalam 1x24 jam.'
+], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\adyatama-school2\resources\views/registration/index.blade.php ENDPATH**/ ?>

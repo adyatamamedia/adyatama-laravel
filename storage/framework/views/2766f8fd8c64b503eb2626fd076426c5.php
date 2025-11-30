@@ -122,4 +122,7 @@
 
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.public', ['title' => 'Guru & Staff'], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\adyatama-school2\resources\views/guru-staff/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.public', [
+    'title' => 'Guru & Staff',
+    'description' => 'Mengenal lebih dekat para pendidik dan tenaga kependidikan yang berdedikasi tinggi di ADYATAMA SCHOOL.'
+], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\adyatama-school2\resources\views/guru-staff/index.blade.php ENDPATH**/ ?>

@@ -1,2 +1,9 @@
 User-agent: *
-Disallow:
+Disallow: /dash/
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /storage/
+Disallow: /*.php$
+
+# Sitemap
+Sitemap: https://your-domain.com/sitemap.xml

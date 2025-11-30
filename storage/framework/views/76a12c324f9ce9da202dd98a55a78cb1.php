@@ -144,7 +144,7 @@
 
                             </h3>
                             <?php if($gallery->description): ?>
-                                <p class="text-sm text-slate-500 line-clamp-2"><?php echo e($gallery->description); ?></p>
+                                <p class="text-sm text-slate-500 line-clamp-2"><?php echo e(strip_tags($gallery->description)); ?></p>
                             <?php endif; ?>
                         </div>
                     </a>
@@ -181,4 +181,7 @@
 
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.public', ['title' => $selectedExtra ? 'Galeri - ' . ($extracurriculars->firstWhere('slug', $selectedExtra)?->name ?? 'Galeri') : 'Galeri'], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\adyatama-school2\resources\views/galleries/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.public', [
+    'title' => $selectedExtra ? 'Galeri - ' . ($extracurriculars->firstWhere('slug', $selectedExtra)?->name ?? 'Galeri') : 'Galeri',
+    'description' => $selectedExtra ? 'Kumpulan foto dan dokumentasi kegiatan ' . ($extracurriculars->firstWhere('slug', $selectedExtra)?->name) : 'Kumpulan foto dan dokumentasi kegiatan sekolah dan ekstrakurikuler'
+], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\adyatama-school2\resources\views/galleries/index.blade.php ENDPATH**/ ?>

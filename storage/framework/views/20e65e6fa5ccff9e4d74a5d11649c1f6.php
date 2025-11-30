@@ -20,7 +20,9 @@
             </nav>
 
             <h1 class="text-4xl lg:text-5xl font-bold text-slate-900 mb-3">
-                <?php if($selectedCategory): ?>
+                <?php if($selectedTag): ?>
+                    Berita Tag: <span class="text-primary-600">#<?php echo e($selectedTag); ?></span>
+                <?php elseif($selectedCategory): ?>
                     Berita: <?php echo e($categories->firstWhere('slug', $selectedCategory)?->name); ?>
 
                 <?php else: ?>
@@ -28,7 +30,9 @@
                 <?php endif; ?>
             </h1>
             <p class="text-slate-600 max-w-2xl mx-auto">
-                <?php if($selectedCategory): ?>
+                <?php if($selectedTag): ?>
+                    Artikel dengan tag <strong>#<?php echo e($selectedTag); ?></strong>
+                <?php elseif($selectedCategory): ?>
                     Artikel dan informasi terbaru seputar <?php echo e(strtolower($categories->firstWhere('slug', $selectedCategory)?->name)); ?>
 
                 <?php else: ?>
@@ -39,25 +43,8 @@
 
         <!-- Filter Bar -->
         <div class="max-w-4xl mx-auto">
-            <!-- Search -->
-            <form action="<?php echo e(route('posts.index')); ?>" method="GET" class="mb-4">
-                <?php if($selectedCategory): ?>
-                    <input type="hidden" name="category" value="<?php echo e($selectedCategory); ?>">
-                <?php endif; ?>
-                <div class="relative">
-                    <input type="text" 
-                           name="q" 
-                           value="<?php echo e($search ?? ''); ?>"
-                           placeholder="Cari berita..." 
-                           class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-100 rounded-lg text-sm transition-all">
-                    <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                </div>
-            </form>
-
             <!-- Category Filter -->
-            <div class="flex gap-2 flex-wrap justify-center">
+            <div class="flex gap-2 flex-wrap justify-center mb-4">
                 <a href="<?php echo e(route('posts.index')); ?>" 
                    class="px-4 py-2 rounded-full text-sm font-medium transition-colors <?php echo e(!$selectedCategory ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'); ?>">
                     Semua
@@ -71,8 +58,49 @@
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
 
+            <!-- Search -->
+            <form action="<?php echo e(route('posts.index')); ?>" method="GET" class="mb-4">
+                <?php if($selectedCategory): ?>
+                    <input type="hidden" name="category" value="<?php echo e($selectedCategory); ?>">
+                <?php endif; ?>
+                <?php if($selectedTag): ?>
+                    <input type="hidden" name="tag" value="<?php echo e($selectedTag); ?>">
+                <?php endif; ?>
+                <div class="relative">
+                    <input type="text" 
+                           name="search" 
+                           value="<?php echo e($search ?? ''); ?>"
+                           placeholder="Cari berita..." 
+                           class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-100 rounded-lg text-sm transition-all">
+                    <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </form>
+
+            <!-- Popular Tags -->
+            <?php if(!empty($popularTags)): ?>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                <div class="flex items-center gap-2 mb-3">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                    </svg>
+                    <span class="text-sm font-semibold text-slate-700">Tag Populer:</span>
+                </div>
+                <div class="flex gap-2 flex-wrap">
+                    <?php $__currentLoopData = $popularTags; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tag): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <a href="<?php echo e(route('posts.index', ['tag' => $tag])); ?>" 
+                           class="px-3 py-1 text-xs font-medium rounded-full transition-all <?php echo e($selectedTag == $tag ? 'bg-primary-100 text-primary-700 ring-2 ring-primary-200' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'); ?>">
+                            #<?php echo e($tag); ?>
+
+                        </a>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
             <!-- Active Filters Info -->
-            <?php if($selectedCategory || $search): ?>
+            <?php if($selectedCategory || $selectedTag || $search): ?>
                 <div class="text-center mt-4 text-sm text-slate-600">
                     Menampilkan
                     <?php if($search): ?>
@@ -83,6 +111,12 @@
                     <?php endif; ?>
                     <?php if($selectedCategory): ?>
                         <strong><?php echo e($categories->firstWhere('slug', $selectedCategory)?->name); ?></strong>
+                    <?php endif; ?>
+                    <?php if(($selectedCategory || $search) && $selectedTag): ?>
+                        dengan
+                    <?php endif; ?>
+                    <?php if($selectedTag): ?>
+                        tag <strong class="text-primary-600">#<?php echo e($selectedTag); ?></strong>
                     <?php endif; ?>
                     · 
                     <a href="<?php echo e(route('posts.index')); ?>" class="text-primary-600 hover:text-primary-700 font-medium">
@@ -197,4 +231,7 @@
 
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.public', ['title' => $selectedCategory ? 'Berita - ' . ($categories->firstWhere('slug', $selectedCategory)?->name ?? 'Berita') : 'Berita'], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\adyatama-school2\resources\views/posts/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.public', [
+    'title' => $selectedTag ? 'Berita Tag: ' . $selectedTag : ($selectedCategory ? 'Berita - ' . ($categories->firstWhere('slug', $selectedCategory)?->name ?? 'Berita') : 'Berita'),
+    'description' => $selectedTag ? 'Artikel dengan tag ' . $selectedTag : ($selectedCategory ? 'Artikel dan informasi terbaru seputar ' . strtolower($categories->firstWhere('slug', $selectedCategory)?->name) : 'Kumpulan artikel dan informasi terbaru dari sekolah')
+], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\adyatama-school2\resources\views/posts/index.blade.php ENDPATH**/ ?>

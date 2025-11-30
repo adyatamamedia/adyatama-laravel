@@ -1,4 +1,7 @@
-@extends('layouts.public', ['title' => 'Daftar Online MI'])
+@extends('layouts.public', [
+    'title' => 'Daftar Online MI',
+    'description' => 'Formulir Pendaftaran Online MI. Isi data calon siswa dengan lengkap. Tim kami akan menghubungi melalui WhatsApp dalam 1x24 jam.'
+])
 
 @push('styles')
 <style>

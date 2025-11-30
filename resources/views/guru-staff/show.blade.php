@@ -1,4 +1,9 @@
-@extends('layouts.public', ['title' => $person->nama_lengkap])
+@extends('layouts.public', [
+    'title' => $person->nama_lengkap,
+    'description' => $person->jabatan . ($person->bidang ? ' - ' . $person->bidang : ''),
+    'image' => $person->photo_url,
+    'type' => 'profile'
+])
 
 @section('content')
 <!-- Header Section -->

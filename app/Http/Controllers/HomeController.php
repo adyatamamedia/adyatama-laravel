@@ -19,14 +19,28 @@ class HomeController extends Controller
         $settings = $this->meta->settings();
 
         $featuredPost = Post::published()
+            ->where(function($query) {
+                $query->where('post_type', '!=', 'announcement')
+                      ->orWhereNull('post_type');
+            })
             ->with(['category', 'author', 'featuredMedia'])
             ->latest('published_at')
             ->first();
 
         $latestPosts = Post::published()
+            ->where(function($query) {
+                $query->where('post_type', '!=', 'announcement')
+                      ->orWhereNull('post_type');
+            })
             ->with(['category', 'featuredMedia'])
             ->latest('published_at')
             ->take(8)
+            ->get();
+
+        $breakingNews = Post::published()
+            ->where('post_type', 'announcement')
+            ->latest('published_at')
+            ->take(5)
             ->get();
 
         $announcements = Post::published()
@@ -54,6 +68,7 @@ class HomeController extends Controller
             'featuredPost' => $featuredPost,
             'latestPosts' => $latestPosts,
             'recentPosts' => $latestPosts, // For navbar mega menu
+            'breakingNews' => $breakingNews,
             'announcements' => $announcements,
             'galleries' => $galleries,
             'guru' => $guru,

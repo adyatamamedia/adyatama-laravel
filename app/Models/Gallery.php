@@ -19,7 +19,13 @@ class Gallery extends Model
         'extracurricular_id',
         'view_count',
         'status',
+        'featured_img',
     ];
+
+    public function getFeaturedImageUrlAttribute(): ?string
+    {
+        return media_url($this->featured_img ?? null);
+    }
 
     public function author()
     {

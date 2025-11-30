@@ -19,6 +19,10 @@ class PostController extends Controller
     public function index(Request $request)
     {
         $posts = Post::published()
+            ->where(function($query) {
+                $query->where('post_type', '!=', 'announcement')
+                      ->orWhereNull('post_type');
+            })
             ->with(['category', 'featuredMedia'])
             ->when($request->get('category'), function ($query, $slug) {
                 $categoryId = Category::where('slug', $slug)->value('id');
@@ -26,12 +30,21 @@ class PostController extends Controller
                     $query->where('category_id', $categoryId);
                 }
             })
-            ->when($request->get('q'), fn ($query, $term) => $query->where('title', 'like', "%{$term}%"))
+            ->when($request->get('tag'), function ($query, $tagName) {
+                $query->whereHas('tags', function($q) use ($tagName) {
+                    $q->where('name', $tagName);
+                });
+            })
+            ->when($request->get('search'), fn ($query, $term) => $query->where('title', 'like', "%{$term}%"))
             ->orderByDesc('published_at')
             ->paginate(9)
             ->withQueryString();
 
         $recentPosts = Post::published()
+            ->where(function($query) {
+                $query->where('post_type', '!=', 'announcement')
+                      ->orWhereNull('post_type');
+            })
             ->with(['category'])
             ->latest('published_at')
             ->take(6)
@@ -41,6 +54,22 @@ class PostController extends Controller
             $query->orderBy('order_num')->limit(1);
         }])->get();
 
+        // Get popular tags (group by name and count)
+        $popularTags = Tag::select('name')
+            ->selectRaw('COUNT(*) as count')
+            ->whereHas('post', function($query) {
+                $query->published()
+                      ->where(function($q) {
+                          $q->where('post_type', '!=', 'announcement')
+                            ->orWhereNull('post_type');
+                      });
+            })
+            ->groupBy('name')
+            ->orderByDesc('count')
+            ->take(20)
+            ->pluck('name')
+            ->toArray();
+
         return view('posts.index', [
             'settings' => $this->meta->settings(),
             'navigation' => $this->meta->navigation(),
@@ -49,7 +78,9 @@ class PostController extends Controller
             'recentPosts' => $recentPosts,
             'extracurriculars' => $extracurriculars,
             'selectedCategory' => $request->get('category'),
-            'search' => $request->get('q'),
+            'selectedTag' => $request->get('tag'),
+            'search' => $request->get('search'),
+            'popularTags' => $popularTags,
         ]);
     }
 
@@ -63,6 +94,10 @@ class PostController extends Controller
             ->withQueryString();
 
         $recentPosts = Post::published()
+            ->where(function($query) {
+                $query->where('post_type', '!=', 'announcement')
+                      ->orWhereNull('post_type');
+            })
             ->with(['category'])
             ->latest('published_at')
             ->take(6)
@@ -98,6 +133,10 @@ class PostController extends Controller
         $post->loadCount(['comments' => fn($q) => $q->whereNull('parent_id')]); // Count only parent comments
         
         $related = Post::published()
+            ->where(function($query) {
+                $query->where('post_type', '!=', 'announcement')
+                      ->orWhereNull('post_type');
+            })
             ->with('featuredMedia')
             ->where('category_id', $post->category_id)
             ->whereKeyNot($post->id)
@@ -106,6 +145,10 @@ class PostController extends Controller
             ->get();
 
         $recent_posts = Post::published()
+            ->where(function($query) {
+                $query->where('post_type', '!=', 'announcement')
+                      ->orWhereNull('post_type');
+            })
             ->with(['featuredMedia', 'category'])
             ->whereKeyNot($post->id)
             ->latest('published_at')
@@ -113,6 +156,10 @@ class PostController extends Controller
             ->get();
 
         $popular_posts = Post::published()
+            ->where(function($query) {
+                $query->where('post_type', '!=', 'announcement')
+                      ->orWhereNull('post_type');
+            })
             ->with(['featuredMedia', 'category'])
             ->whereKeyNot($post->id)
             ->orderByDesc('view_count')
@@ -120,6 +167,10 @@ class PostController extends Controller
             ->get();
 
         $recentPosts = Post::published()
+            ->where(function($query) {
+                $query->where('post_type', '!=', 'announcement')
+                      ->orWhereNull('post_type');
+            })
             ->with(['category'])
             ->latest('published_at')
             ->take(6)

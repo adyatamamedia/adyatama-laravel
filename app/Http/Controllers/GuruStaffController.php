@@ -16,6 +16,10 @@ class GuruStaffController extends Controller
     public function index()
     {
         $recentPosts = Post::published()
+            ->where(function($query) {
+                $query->where('post_type', '!=', 'announcement')
+                      ->orWhereNull('post_type');
+            })
             ->with(['category'])
             ->latest('published_at')
             ->take(6)
@@ -40,6 +44,10 @@ class GuruStaffController extends Controller
         $person = GuruStaff::active()->findOrFail($id);
 
         $recentPosts = Post::published()
+            ->where(function($query) {
+                $query->where('post_type', '!=', 'announcement')
+                      ->orWhereNull('post_type');
+            })
             ->with(['category'])
             ->latest('published_at')
             ->take(6)

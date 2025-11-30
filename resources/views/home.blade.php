@@ -1,4 +1,9 @@
-@extends('layouts.public', ['title' => 'Beranda'])
+@extends('layouts.public', [
+    'title' => 'Beranda',
+    'title_override' => ($settings['site_name'] ?? 'ADYATAMA SCHOOL') . ' | ' . ($settings['site_tagline'] ?? 'Membentuk Generasi Qurani dan Berprestasi'),
+    'description' => $settings['site_description'] ?? 'Sekolah Islam terpadu dengan fokus pada karakter dan prestasi akademik.',
+    'image' => $settings['hero_bg_image'] ?? null
+])
 
 @section('content')
 <section class="bg-gradient-to-br from-sky-50 to-white py-16">
@@ -110,7 +115,7 @@
                             </div>
                         @endif
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
-                        <p class="absolute bottom-4 left-4 text-white font-semibold">{{ $gallery->title }}</p>
+                        <p class="absolute bottom-4 left-4 text-white font-semibold opacity-0 group-hover:opacity-100 transition">{{ $gallery->title }}</p>
                     </div>
                 </a>
             @endforeach
@@ -153,7 +158,7 @@
 
 <section class="py-16">
     <div class="container mx-auto px-4 text-center">
-        <h2 class="text-3xl font-bold mb-4">Siap bergabung dengan ADYATAMA SCHOOL?</h2>
+        <h2 class="text-3xl font-bold mb-4">Siap bergabung dengan {{ $settings['site_name'] ?? 'ADYATAMA SCHOOL' }}?</h2>
         <p class="text-lg text-slate-600 mb-8">Isi formulir pendaftaran online MI dan tim kami akan menghubungi dalam 1x24 jam.</p>
         <a href="/daftar-online" class="inline-flex items-center gap-2 bg-emerald-500 text-white px-8 py-3 rounded-full font-semibold">
             Mulai Pendaftaran

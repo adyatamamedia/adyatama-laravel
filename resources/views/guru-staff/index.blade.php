@@ -1,4 +1,7 @@
-@extends('layouts.public', ['title' => 'Guru & Staff'])
+@extends('layouts.public', [
+    'title' => 'Guru & Staff',
+    'description' => 'Mengenal lebih dekat para pendidik dan tenaga kependidikan yang berdedikasi tinggi di ADYATAMA SCHOOL.'
+])
 
 @section('content')
 <!-- Header Section -->

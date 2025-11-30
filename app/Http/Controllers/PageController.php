@@ -18,6 +18,10 @@ class PageController extends Controller
         abort_if($page->status !== 'published', 404);
 
         $recentPosts = Post::published()
+            ->where(function($query) {
+                $query->where('post_type', '!=', 'announcement')
+                      ->orWhereNull('post_type');
+            })
             ->with(['category'])
             ->latest('published_at')
             ->take(6)

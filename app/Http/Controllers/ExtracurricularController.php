@@ -19,6 +19,10 @@ class ExtracurricularController extends Controller
         }])->get();
 
         $recentPosts = Post::published()
+            ->where(function($query) {
+                $query->where('post_type', '!=', 'announcement')
+                      ->orWhereNull('post_type');
+            })
             ->with(['category'])
             ->latest('published_at')
             ->take(6)
