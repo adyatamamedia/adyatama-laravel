@@ -18,7 +18,8 @@ class GalleryController extends Controller
         $galleries = Gallery::query()
             ->with(['items' => fn ($query) => $query->orderBy('order_num'), 'extracurricular'])
             ->where('status', 'published')
-            ->when($request->get('extracurricular'), function ($query, $slug) {
+            ->when($request->filled('extracurricular'), function ($query) use ($request) {
+                $slug = $request->get('extracurricular');
                 $extraId = Extracurricular::where('slug', $slug)->value('id');
                 if ($extraId) {
                     $query->where('extracurricular_id', $extraId);

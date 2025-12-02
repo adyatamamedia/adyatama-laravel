@@ -38,6 +38,11 @@
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
     </url>
+    <url>
+        <loc>{{ url('/authors') }}</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+    </url>
 
     <!-- Dynamic Pages: Pages -->
     @foreach ($pages as $page)
@@ -60,6 +65,22 @@
                 <image:image>
                     <image:loc>{{ $person->photo_url }}</image:loc>
                     <image:title>{{ $person->nama_lengkap }} - {{ $person->jabatan }}</image:title>
+                </image:image>
+            @endif
+        </url>
+    @endforeach
+
+    <!-- Dynamic Pages: Authors -->
+    @foreach ($authors as $author)
+        <url>
+            <loc>{{ url("/authors/{$author->username}") }}</loc>
+            <lastmod>{{ $author->updated_at->tz('UTC')->toAtomString() }}</lastmod>
+            <changefreq>weekly</changefreq>
+            <priority>0.7</priority>
+            @if($author->photo_url)
+                <image:image>
+                    <image:loc>{{ $author->photo_url }}</image:loc>
+                    <image:title>{{ $author->fullname }}</image:title>
                 </image:image>
             @endif
         </url>

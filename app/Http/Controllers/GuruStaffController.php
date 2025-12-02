@@ -32,8 +32,23 @@ class GuruStaffController extends Controller
         return view('guru-staff.index', [
             'settings' => $this->meta->settings(),
             'navigation' => $this->meta->navigation(),
-            'guru' => GuruStaff::active()->where('status', 'guru')->orderBy('nama_lengkap')->get(),
-            'staff' => GuruStaff::active()->where('status', 'staff')->orderBy('nama_lengkap')->get(),
+            'guru' => GuruStaff::active()
+                ->whereIn('status', ['guru', 'kepala-sekolah'])
+                ->orderByRaw("CASE WHEN status = 'kepala-sekolah' THEN 0 ELSE 1 END, nama_lengkap ASC")
+                ->get(),
+            'staff' => GuruStaff::active()
+                ->whereIn('status', [
+                    'staff', 
+                    'tenaga-administrasi', 
+                    'tenaga-perpustakaan', 
+                    'tenaga-laboratorium', 
+                    'tenaga-kebersihan', 
+                    'tenaga-keamanan', 
+                    'bendahara', 
+                    'operator'
+                ])
+                ->orderBy('nama_lengkap')
+                ->get(),
             'recentPosts' => $recentPosts,
             'extracurriculars' => $extracurriculars,
         ]);

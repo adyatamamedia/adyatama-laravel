@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Extracurricular;
 use App\Models\Gallery;
 use App\Models\GuruStaff;
+use App\Models\Page;
 use App\Models\Post;
 use App\Services\SiteMetaService;
 
@@ -17,6 +18,11 @@ class HomeController extends Controller
     public function __invoke()
     {
         $settings = $this->meta->settings();
+
+        // Get Welcome Message Page
+        $welcomeMessage = Page::where('slug', 'kata-pengantar')
+            ->where('status', 'published')
+            ->first();
 
         $featuredPost = Post::published()
             ->where(function($query) {
@@ -57,7 +63,23 @@ class HomeController extends Controller
             ->take(6)
             ->get();
 
-        $guru = GuruStaff::active()->where('status', 'guru')->take(4)->get();
+        $guru = GuruStaff::active()
+            ->whereIn('status', [
+                'guru', 'staff', 'kepala-sekolah', 
+                'tenaga-administrasi', 'tenaga-perpustakaan', 
+                'tenaga-laboratorium', 'tenaga-kebersihan', 
+                'tenaga-keamanan', 'bendahara', 'operator'
+            ])
+            ->orderByRaw("
+                CASE 
+                    WHEN status = 'kepala-sekolah' THEN 1 
+                    WHEN status = 'guru' THEN 2 
+                    ELSE 3 
+                END ASC
+            ")
+            ->latest()
+            ->take(4)
+            ->get();
 
         $extracurriculars = Extracurricular::with(['galleries.items' => function($query) {
             $query->orderBy('order_num')->limit(1);
@@ -65,6 +87,7 @@ class HomeController extends Controller
 
         return view('home', [
             'settings' => $settings,
+            'welcomeMessage' => $welcomeMessage,
             'featuredPost' => $featuredPost,
             'latestPosts' => $latestPosts,
             'recentPosts' => $latestPosts, // For navbar mega menu
